@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MR ELON ALI — Money Manager</title>
+<style>
+:root{
+  --bg:#08090d;--panel:#11131a;--panel2:#171a23;--line:#272b38;
+  --text:#f4f6fb;--muted:#9299aa;--primary:#7c5cff;--cyan:#24d6d1;
+  --green:#37d68a;--red:#ff667d;--yellow:#f4c95d;--radius:20px
+}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#21154b 0,transparent 30%),var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:#0b0c11;border-right:1px solid var(--line);padding:24px 15px;position:fixed;inset:0 auto 0 0;z-index:4}
+.brand{font-weight:900;font-size:20px;letter-spacing:1px;padding:10px 14px 28px}.brand span{color:var(--primary)}
+nav button{display:block;width:100%;background:transparent;color:var(--muted);padding:13px 15px;text-align:left;border-radius:12px;margin:4px 0}
+nav button:hover,nav button.active{background:linear-gradient(90deg,#241b52,transparent);color:white}
+.main{margin-left:250px;width:calc(100% - 250px);padding:24px;max-width:1700px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.eyebrow{color:var(--muted);font-size:12px}.title{font-size:28px;font-weight:800;margin-top:5px}
+.profile{display:flex;align-items:center;gap:10px;position:relative}
+.profile-avatar{width:50px;height:50px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;transition:all 0.3s;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--cyan));flex-shrink:0}
+.profile-avatar:hover{opacity:0.8;transform:scale(1.05)}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.profile-avatar .avatar-text{font-size:20px;font-weight:800;color:white}
+.profile-info{display:flex;flex-direction:column;align-items:flex-end}
+.profile-name{font-weight:600;font-size:16px}
+.profile-actions{display:flex;gap:6px;margin-top:4px}
+.profile-actions button{background:rgba(124,92,255,0.2);color:var(--text);padding:4px 10px;border-radius:8px;font-size:11px;transition:all 0.3s}
+.profile-actions button:hover{background:rgba(124,92,255,0.4)}
+.profile-actions .remove-btn{background:rgba(255,102,125,0.2)}
+.profile-actions .remove-btn:hover{background:rgba(255,102,125,0.4)}
+#profilePicInput{display:none}
+.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:linear-gradient(145deg,rgba(28,31,42,.95),rgba(13,15,21,.95));border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 15px 40px #0003}
+.stat{min-height:135px}.stat small,.muted{color:var(--muted)}.amount{font-size:27px;font-weight:800;margin:11px 0}.positive{color:var(--green)}.negative{color:var(--red)}.accent{color:var(--cyan)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:11px;font-weight:700}.btn.secondary{background:#222634}.btn.danger{background:#742537}.btn.small{padding:7px 10px;font-size:12px}
+input,select,textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0d13;color:var(--text);outline:0}
+textarea{min-height:75px;resize:vertical}label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}
+table{width:100%;border-collapse:collapse}th,td{padding:13px 8px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px}
+.scroll{overflow:auto}.pill{padding:4px 8px;border-radius:20px;background:#252938;font-size:11px}.overdue{color:var(--red);font-weight:bold}
+.account{display:flex;justify-content:space-between;align-items:center}.account h3{margin:0 0 8px}.icon{font-size:25px}
+canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
+.empty{text-align:center;color:var(--muted);padding:35px}.quick{display:flex;gap:8px;flex-wrap:wrap}
+.modal-bg{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:10;padding:15px}.modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:#151823;border:1px solid var(--line);border-radius:20px;padding:22px}
+.modal h2{margin-top:0}.close{float:right;background:none;color:var(--muted);font-size:22px}
+.toast{position:fixed;right:20px;bottom:20px;background:#242a3a;padding:14px 18px;border-radius:12px;z-index:20;box-shadow:0 8px 30px #0008}
+.mobile-nav{display:none}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.authbox{width:min(440px,100%);background:var(--panel);padding:30px;border:1px solid var(--line);border-radius:25px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .sidebar{display:none}.main{margin:0;width:100%;padding:16px;padding-bottom:85px}.cards,.two{grid-template-columns:1fr}.title{font-size:23px}
+ .mobile-nav{display:flex;position:fixed;bottom:0;inset-inline:0;background:#11131b;border-top:1px solid var(--line);z-index:5;justify-content:space-around;padding:8px}
+ .mobile-nav button{background:none;color:var(--muted);font-size:11px}.mobile-nav button.active{color:white}.formgrid{grid-template-columns:1fr}
+ table thead{display:none}table,tbody,tr,td{display:block;width:100%}tr{border:1px solid var(--line);border-radius:13px;padding:8px;margin-bottom:10px}td{border:0;padding:5px 4px}td:before{content:attr(data-label);color:var(--muted);margin-right:8px}
+ .profile-avatar{width:40px;height:40px}.profile-name{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div id="auth" class="auth">
+ <div class="authbox">
+  <div class="brand">MR ELON <span>ALI</span></div>
+  <p class="muted">Local demo authentication — not suitable for real financial security.</p>
+  <div id="authForm"></div>
+ </div>
+</div>
+
+<div id="app" class="app hidden">
+<aside class="sidebar">
+ <div class="brand">MR ELON <span>ALI</span></div>
+ <nav id="nav"></nav>
+ <button class="btn secondary" style="width:100%;margin-top:25px" onclick="logout()">Logout</button>
+</aside>
+<main class="main">
+<header>
+ <div><div class="eyebrow">Personal finance workspace</div><div id="pageTitle" class="title">Dashboard</div></div>
+ <div class="profile">
+   <div class="profile-info">
+     <div class="profile-name" id="userName"></div>
+     <div class="profile-actions">
+       <button onclick="document.getElementById('profilePicInput').click()">Upload Photo</button>
+       <button class="remove-btn" onclick="deleteProfilePic()">Remove</button>
+     </div>
+   </div>
+   <div class="profile-avatar" id="avatarContainer" onclick="document.getElementById('profilePicInput').click()">
+     <span class="avatar-text" id="avatarText">M</span>
+     <img id="profilePicImg" style="display:none" alt="Profile">
+   </div>
+   <input type="file" id="profilePicInput" accept="image/*" onchange="uploadProfilePic(event)">
+ </div>
+</header>
+<section id="content"></section>
+</main>
+<div class="mobile-nav" id="mobileNav"></div>
+</div>
+<div id="modalRoot"></div><div id="toast" class="toast hidden"></div>
+
+<script>
+const KEY='mra_users', SESSION='mra_session';
+const accounts=['Cash','Binance','eSewa','Khalti','MyPay'];
+const navItems=[['dashboard','▦','Dashboard'],['transactions','↕','Transactions'],['accounts','◈','Digital Accounts'],['ledger','◉','Udhaar & Cash'],['pnl','◒','Daily P&L'],['reports','▥','Reports'],['settings','⚙','Settings']];
+let page='dashboard', mode='login';
+
+const $=s=>document.querySelector(s);
+const money=n=>{let c=current()?.settings.currency||'NPR';return (c==='NPR'?'Rs. ':'')+Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})};
+const today=()=>new Date().toISOString().slice(0,10);
+function users(){return JSON.parse(localStorage.getItem(KEY)||'{}')}
+function current(){let id=localStorage.getItem(SESSION);return id&&users()[id]}
+function saveUser(u){let x=users();x[u.id]=u;localStorage.setItem(KEY,JSON.stringify(x))}
+function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+Math.random()}
+function blank(id,name){return{id,name,password:'',profilePic:null,transactions:[],ledger:[],pnl:[],adjustments:{},settings:{currency:'NPR',dateFormat:'YYYY-MM-DD',theme:'dark',notifications:true}}}
+function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),2600)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+// ========== PROFILE PICTURE FUNCTIONS ==========
+function loadProfilePic() {
+  let u = current();
+  if (!u) return;
+  let img = document.getElementById('profilePicImg');
+  let text = document.getElementById('avatarText');
+  let container = document.getElementById('avatarContainer');
+  
+  if (u.profilePic) {
+    img.src = u.profilePic;
+    img.style.display = 'block';
+    text.style.display = 'none';
+    container.style.background = 'transparent';
+  } else {
+    img.style.display = 'none';
+    text.style.display = 'grid';
+    text.textContent = (u.name || 'U')[0].toUpperCase();
+    container.style.background = 'linear-gradient(135deg,var(--primary),var(--cyan))';
+  }
+}
+
+function uploadProfilePic(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+  
+  // Check file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    toast('Image too large! Max 5MB');
+    return;
+  }
+  
+  // Check file type
+  if (!file.type.startsWith('image/')) {
+    toast('Please select an image file');
+    return;
+  }
+  
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let u = current();
+    u.profilePic = e.target.result;
+    saveUser(u);
+    loadProfilePic();
+    toast('Profile picture updated!');
+  };
+  reader.readAsDataURL(file);
+  // Reset input so same file can be uploaded again
+  event.target.value = '';
+}
+
+function deleteProfilePic() {
+  if (!confirm('Remove your profile picture?')) return;
+  let u = current();
+  u.profilePic = null;
+  saveUser(u);
+  loadProfilePic();
+  toast('Profile picture removed');
+}
+// ==============================================
+
+function renderAuth(){
+ $('#authForm').innerHTML=`<div class="toolbar"><button class="btn ${mode==='login'?'':'secondary'}" onclick="mode='login';renderAuth()">Login</button><button class="btn ${mode==='register'?'':'secondary'}" onclick="mode='register';renderAuth()">Register</button></div>
+ <form onsubmit="auth(event)"><label>User ID</label><input id="aid" required minlength="3"><label>Password</label><input id="apass" type="password" required minlength="4"><button class="btn" style="width:100%;margin-top:18px">${mode==='login'?'Login':'Create local demo account'}</button></form>
+ <p class="muted" style="font-size:12px;margin-top:20px">Passwords are stored locally for demonstration only. Never use real banking credentials, PINs, OTPs, seed phrases or private keys.</p>`;
+}
+function auth(e){e.preventDefault();let id=$('#aid').value.trim(),pass=$('#apass').value,x=users();
+ if(mode==='register'){if(x[id])return toast('User ID already exists');let u=blank(id,id);u.password=pass;saveUser(u);localStorage.setItem(SESSION,id);start();toast('Demo account created')}
+ else{if(!x[id]||x[id].password!==pass)return toast('Invalid local credentials');localStorage.setItem(SESSION,id);start()}
+}
+function logout(){localStorage.removeItem(SESSION);location.reload()}
+function start(){$('#auth').classList.add('hidden');$('#app').classList.remove('hidden');drawNav();render();loadProfilePic();}
+function drawNav(){let h=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]} &nbsp; ${x[2]}</button>`).join('');$('#nav').innerHTML=h;$('#mobileNav').innerHTML=navItems.slice(0,5).map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]}<br>${x[2]}</button>`).join('')}
+function calc(){let u=current(),tx=u.transactions;let income=tx.filter(x=>['Income','Received'].includes(x.type)).reduce((a,x)=>a+x.amount,0),expense=tx.filter(x=>['Expense','Payment'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
+ let bal={Cash:0,Binance:0,eSewa:0,Khalti:0,MyPay:0};tx.forEach(x=>{let sign=['Income','Deposit','Received','Loan Taken'].includes(x.type)?1:-1;if(bal[x.account]!=null)bal[x.account]+=sign*x.amount});Object.keys(bal).forEach(k=>bal[k]+=+(u.adjustments[k]||0));
+ let rec=u.ledger.filter(x=>x.kind==='receive'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0),pay=u.ledger.filter(x=>x.kind==='pay'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0);return{income,expense,bal,total:Object.values(bal).reduce((a,b)=>a+b,0),rec,pay}}
+function render(){let u=current();$('#userName').textContent=u.name;loadProfilePic();$('#pageTitle').textContent=navItems.find(x=>x[0]===page)[2];let views={dashboard:dashboard,transactions:transactions,accounts:accountsView,ledger:ledger,pnl:pnl,reports:reports,settings:settings};$('#content').innerHTML=views[page]()}
+function dashboard(){let c=calc(),d=c.income-c.expense,todayTx=current().transactions.filter(x=>x.date===today()),td=todayTx.reduce((a,x)=>a+(['Income','Received'].includes(x.type)?x.amount:-x.amount),0);
+return `<div class="grid cards"><div class="card stat">◉<small>Total Balance</small><div class="amount">${money(c.total)}</div></div><div class="card stat">↗<small>Total Income</small><div class="amount positive">${money(c.income)}</div></div><div class="card stat">↘<small>Total Expenses</small><div class="amount negative">${money(c.expense)}</div></div><div class="card stat">◒<small>Today's P/L</small><div class="amount ${td>=0?'positive':'negative'}">${money(td)}</div></div><div class="card stat">◉<small>Money To Receive</small><div class="amount accent">${money(c.rec)}</div></div><div class="card stat">◉<small>Money To Pay</small><div class="amount negative">${money(c.pay)}</div></div><div class="card stat">◈<small>Digital Accounts</small><div class="amount">${money(c.total-c.bal.Cash)}</div></div><div class="card stat">↻<small>Recovery Amount</small><div class="amount">${money(Math.max(0,-d))}</div></div></div>
+<div class="card" style="margin-top:16px"><h3>Quick actions</h3><div class="quick"><button class="btn" onclick="openTx()">＋ Add transaction</button><button class="btn secondary" onclick="page='ledger';render()">＋ Add ledger entry</button><button class="btn secondary" onclick="page='pnl';render()">Daily P&L</button></div></div>
+<div class="card" style="margin-top:16px"><h3>Recent transactions</h3>${txTable(current().transactions.slice(-6).reverse())}</div>`}
+function txTable(a){if(!a.length)return'<div class="empty">No transactions recorded yet.</div>';return`<div class="scroll"><table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>${a.map(x=>`<tr><td data-label="Date">${x.date}</td><td data-label="Type"><span class="pill">${esc(x.type)}</span></td><td data-label="Account">${esc(x.account)}</td><td data-label="Description">${esc(x.description)}</td><td data-label="Amount" class="${['Income','Received','Deposit'].includes(x.type)?'positive':'negative'}">${money(x.amount)}</td><td><button class="btn small danger" onclick="delTx('${x.id}')">Delete</button></td></tr>`).join('')}</tbody></table></div>`}
+function transactions(){return `<div class="toolbar"><input id="q" placeholder="Search transactions..." oninput="filterTx()" style="max-width:300px"><select id="tf" onchange="filterTx()"><option value="">All types</option>${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}</select><button class="btn" onclick="openTx()">＋ Add transaction</button></div><div class="card" id="txlist">${txTable(current().transactions.slice().reverse())}</div>`}
+function filterTx(){let q=$('#q').value.toLowerCase(),f=$('#tf').value,a=current().transactions.filter(x=>(!f||x.type===f)&&JSON.stringify(x).toLowerCase().includes(q));$('#txlist').innerHTML=txTable(a.reverse())}
+function openTx(){modal(`<h2>Add transaction</h2><form onsubmit="addTx(event)"><div class="formgrid"><div><label>Type</label><select id="tt">${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}</select></div><div><label>Account</label><select id="ta">${accounts.map(x=>`<option>${x}</option>`).join('')}</select></div><div><label>Amount</label><input id="am" type="number" min=".01" step=".01" required></div><div><label>Date</label><input id="dt" type="date" value="${today()}" required></div><div><label>Category</label><input id="cat" required></div><div><label>Person (optional)</label><input id="person"></div><div class="full"><label>Description / note</label><textarea id="desc"></textarea></div></div><button class="btn">Save transaction</button></form>`)}
+function addTx(e){e.preventDefault();let u=current();u.transactions.push({id:uid(),type:$('#tt').value,account:$('#ta').value,amount:+$('#am').value,date:$('#dt').value,time:new Date().toLocaleTimeString(),category:$('#cat').value,person:$('#person').value,description:$('#desc').value});saveUser(u);closeModal();render();toast('Transaction saved')}
+function delTx(id){if(!confirm('Delete this transaction?'))return;let u=current();u.transactions=u.transactions.filter(x=>x.id!==id);saveUser(u);render();toast('Transaction deleted')}
+function accountsView(){let c=calc();return `<div class="grid two">${accounts.map(a=>`<div class="card account"><div><h3>${a}</h3><small class="muted">Manual ledger only — no external connection</small><div class="amount">${money(c.bal[a])}</div></div><div class="icon">◈</div></div>`).join('')}</div><div class="card" style="margin-top:16px"><h3>Manual balance adjustment</h3><form onsubmit="adjust(event)" class="toolbar"><select id="aa">${accounts.map(x=>`<option>${x}</option>`).join('')}</select><input id="av" type="number" step=".01" required placeholder="New adjustment amount"><button class="btn">Save adjustment</button></form></div>`}
+function adjust(e){e.preventDefault();let u=current();u.adjustments[$('#aa').value]=+$('#av').value;saveUser(u);render();toast('Balance adjustment saved')}
+function ledger(){let u=current(),q=u.ledger;return `<div class="toolbar"><button class="btn" onclick="openLedger('receive')">＋ Money to receive</button><button class="btn secondary" onclick="openLedger('pay')">＋ Money to pay</button></div><div class="grid two">${['receive','pay'].map(k=>{let a=q.filter(x=>x.kind===k),sum=a.reduce((s,x)=>s+x.amount-x.partial,0);return`<div class="card"><h3>${k==='receive'?'Money To Receive':'Money To Pay'} <span class="accent">${money(sum)}</span></h3>${a.length?a.map(x=>`<div style="border-top:1px solid var(--line);padding:13px 0"><b>${esc(x.person)}</b> — ${money(x.amount-x.partial)} remaining<br><small class="muted">Due ${x.due||'—'} · ${esc(x.note)}</small> ${x.due&&x.due<today()&&!x.paid?'<span class="overdue">Overdue</span>':''}<br><button class="btn small" onclick="partial('${x.id}')">Add payment</button> <button class="btn small danger" onclick="delLedger('${x.id}')">Delete</button></div>`).join(''):'<div class="empty">No entries</div>'}</div>`}).join('')}</div>`}
+function openLedger(kind){modal(`<h2>${kind==='receive'?'Money to receive':'Money to pay'}</h2><form onsubmit="addLedger(event,'${kind}')"><label>Person name</label><input id="lp" required><label>Amount</label><input id="la" type="number" min=".01" step=".01" required><label>${kind==='receive'?'Given':'Borrowed'} date</label><input id="ld" type="date" value="${today()}"><label>Due date</label><input id="due" type="date"><label>Note</label><textarea id="ln"></textarea><button class="btn">Save entry</button></form>`)}
+function addLedger(e,k){e.preventDefault();let u=current();u.ledger.push({id:uid(),kind:k,person:$('#lp').value,amount:+$('#la').value,partial:0,date:$('#ld').value,due:$('#due').value,note:$('#ln').value,paid:false});saveUser(u);closeModal();render();toast('Ledger entry saved')}
+function partial(id){let u=current(),x=u.ledger.find(a=>a.id===id),v=+prompt('Payment amount',x.amount-x.partial);if(!v||v<0)return;x.partial=Math.min(x.amount,x.partial+v);x.paid=x.partial>=x.amount;saveUser(u);render()}
+function delLedger(id){if(confirm('Delete this ledger entry?')){let u=current();u.ledger=u.ledger.filter(x=>x.id!==id);saveUser(u);render()}}
+function pnl(){let u=current(),a=u.pnl.find(x=>x.date===today())||{};return`<div class="card"><h3>Daily profit & loss</h3><form onsubmit="savePnl(event)" class="formgrid"><div><label>Date</label><input id="pd" type="date" value="${a.date||today()}"></div><div><label>Income</label><input id="pi" type="number" step=".01" value="${a.income||0}"></div><div><label>Expense</label><input id="pe" type="number" step=".01" value="${a.expense||0}"></div><div><label>Recovery target</label><input id="pr" type="number" step=".01" value="${a.target||0}"></div><div class="full"><label>Daily notes</label><textarea id="pn">${esc(a.notes||'')}</textarea></div><button class="btn">Save daily P&L</button></form></div><div class="card" style="margin-top:16px"><h3>Date-wise history</h3>${u.pnl.length?txTable(u.pnl.map(x=>({id:x.date,date:x.date,type:'P&L',account:'—',description:`Income ${money(x.income)} / Expense ${money(x.expense)}`,amount:x.income-x.expense}))):'<div class="empty">No daily records</div>'}</div>`}a
+function savePnl(e){e.preventDefault();let u=current(),x={date:$('#pd').value,income:+$('#pi').value||0,expense:+$('#pe').value||0,target:+$('#pr').value||0,notes:$('#pn').value},i=u.pnl.findIndex(a=>a.date===x.date);i<0?u.pnl.push(x):u.pnl[i]=x;saveUser(u);render();toast('Daily P&L saved')}
+function reports(){let c=calc();return`<div class="grid cards"><div class="card stat"><small>Income</small><div class="amount positive">${money(c.income)}</div></div><div class="card stat"><small>Expenses</small><div class="amount negative">${money(c.expense)}</div></div><div class="card stat"><small>Net P/L</small><div class="amount">${money(c.income-c.expense)}</div></div><div class="card stat"><small>Receivable / Payable</small><div class="amount">${money(c.rec)} / ${money(c.pay)}</div></div></div><div class="card" style="margin-top:16px"><h3>Income vs expense</h3><canvas id="chart"></canvas></div>`}
+function settings(){let s=current().settings;return`<div class="card"><h3>Profile & settings</h3><form onsubmit="saveSettings(event)"><label>Display name</label><input id="sn" value="${esc(current().name)}"><label>Currency</label><select id="sc"><option ${s.currency==='NPR'?'selected':''}>NPR</option><option ${s.currency==='USD'?'selected':''}>USD</option><option ${s.currency==='EUR'?'selected':''}>EUR</option></select><label>Date format</label><select id="sd"><option>YYYY-MM-DD</option><option>DD/MM/YYYY</option></select><label><input id="notif" type="checkbox" style="width:auto" ${s.notifications?'checked':''}> Enable notifications</label><button class="btn">Save settings</button></form><hr><button class="btn secondary" onclick="exportJSON()">Export JSON backup</button> <button class="btn secondary" onclick="exportCSV()">Export CSV</button> <button class="btn danger" onclick="resetData()">Reset all data</button><p class="muted">Never enter passwords, PINs, OTPs, seed phrases, private keys or API keys.</p></div>`}
+function saveSettings(e){e.preventDefault();let u=current();u.name=$('#sn').value||u.id;u.settings={...u.settings,currency:$('#sc').value,dateFormat:$('#sd').value,notifications:$('#notif').checked};saveUser(u);render();toast('Settings saved')}
+function exportJSON(){let b=new Blob([JSON.stringify(current(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mr-elon-ali-backup.json';a.click()}
+function exportCSV(){let rows=[['id','type','category','amount','account','date','time','description','person'],...current().transactions.map(x=>[x.id,x.type,x.category,x.amount,x.account,x.date,x.time,x.description,x.person])];let b=new Blob([rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='transactions.csv';a.click()}
+function resetData(){if(confirm('Permanently clear this user’s local data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('Data reset')}}
+function modal(html){$('#modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button>${html}</div></div>`}
+function closeModal(){$('#modalRoot').innerHTML=''}
+if(current()){start();}else renderAuth();
+</script>
+</body>
+</html>
