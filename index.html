@@ -59,8 +59,8 @@ canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
 </style>
 </head>
 <body>
-<!-- Auth section - ab yeh hidden rahega -->
-<div id="auth" class="auth hidden">
+<!-- Auth Section - Always Visible First -->
+<div id="auth" class="auth">
  <div class="authbox">
   <div class="brand">MR ELON <span>ALI</span></div>
   <p class="muted">Local demo authentication — not suitable for real financial security.</p>
@@ -68,7 +68,8 @@ canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
  </div>
 </div>
 
-<div id="app" class="app">
+<!-- App Section - Hidden by default -->
+<div id="app" class="app hidden">
 <aside class="sidebar">
  <div class="brand">MR ELON <span>ALI</span></div>
  <nav id="nav"></nav>
@@ -114,110 +115,6 @@ function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+Math.rand
 function blank(id,name){return{id,name,password:'',profilePic:null,transactions:[],ledger:[],pnl:[],adjustments:{},settings:{currency:'NPR',dateFormat:'YYYY-MM-DD',theme:'dark',notifications:true}}}
 function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),2600)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-
-// ========== AUTO CREATE DEMO USER ==========
-function ensureDemoUser() {
-    let allUsers = users();
-    // Agar koi user nahi hai toh demo create karein
-    if (Object.keys(allUsers).length === 0) {
-        let demoUser = {
-            id: 'demo',
-            name: 'Demo User',
-            password: 'demo123',
-            profilePic: null,
-            transactions: [
-                {
-                    id: uid(),
-                    type: 'Income',
-                    account: 'Cash',
-                    amount: 50000,
-                    date: today(),
-                    time: new Date().toLocaleTimeString(),
-                    category: 'Salary',
-                    person: '',
-                    description: 'Monthly salary'
-                },
-                {
-                    id: uid(),
-                    type: 'Expense',
-                    account: 'eSewa',
-                    amount: 2000,
-                    date: today(),
-                    time: new Date().toLocaleTimeString(),
-                    category: 'Shopping',
-                    person: '',
-                    description: 'Groceries'
-                },
-                {
-                    id: uid(),
-                    type: 'Expense',
-                    account: 'Khalti',
-                    amount: 1500,
-                    date: today(),
-                    time: new Date().toLocaleTimeString(),
-                    category: 'Food',
-                    person: '',
-                    description: 'Lunch'
-                }
-            ],
-            ledger: [
-                {
-                    id: uid(),
-                    kind: 'receive',
-                    person: 'Ram Sharma',
-                    amount: 10000,
-                    partial: 0,
-                    date: today(),
-                    due: '2026-09-15',
-                    note: 'Loan given',
-                    paid: false
-                },
-                {
-                    id: uid(),
-                    kind: 'pay',
-                    person: 'Hari Gurung',
-                    amount: 5000,
-                    partial: 0,
-                    date: today(),
-                    due: '2026-08-20',
-                    note: 'Borrowed money',
-                    paid: false
-                }
-            ],
-            pnl: [
-                {
-                    date: today(),
-                    income: 50000,
-                    expense: 3500,
-                    target: 10000,
-                    notes: 'Good day!'
-                }
-            ],
-            adjustments: {
-                'Cash': 5000,
-                'eSewa': -1000
-            },
-            settings: {
-                currency: 'NPR',
-                dateFormat: 'YYYY-MM-DD',
-                theme: 'dark',
-                notifications: true
-            }
-        };
-        allUsers['demo'] = demoUser;
-        localStorage.setItem(KEY, JSON.stringify(allUsers));
-        localStorage.setItem(SESSION, 'demo');
-        return true;
-    }
-    
-    // Agar user hai lekin koi session nahi toh pehle user ko login karein
-    if (!localStorage.getItem(SESSION)) {
-        let firstUser = Object.keys(allUsers)[0];
-        localStorage.setItem(SESSION, firstUser);
-        return true;
-    }
-    return false;
-}
 
 // ========== PROFILE PICTURE FUNCTIONS ==========
 function loadProfilePic() {
@@ -277,27 +174,60 @@ function deleteProfilePic() {
 // ==============================================
 
 function renderAuth(){
- $('#authForm').innerHTML=`<div class="toolbar"><button class="btn ${mode==='login'?'':'secondary'}" onclick="mode='login';renderAuth()">Login</button><button class="btn ${mode==='register'?'':'secondary'}" onclick="mode='register';renderAuth()">Register</button></div>
- <form onsubmit="auth(event)"><label>User ID</label><input id="aid" required minlength="3"><label>Password</label><input id="apass" type="password" required minlength="4"><button class="btn" style="width:100%;margin-top:18px">${mode==='login'?'Login':'Create local demo account'}</button></form>
- <p class="muted" style="font-size:12px;margin-top:20px">Passwords are stored locally for demonstration only. Never use real banking credentials, PINs, OTPs, seed phrases or private keys.</p>`;
+ $('#authForm').innerHTML=`
+ <div class="toolbar">
+   <button class="btn ${mode==='login'?'':'secondary'}" onclick="mode='login';renderAuth()">Login</button>
+   <button class="btn ${mode==='register'?'':'secondary'}" onclick="mode='register';renderAuth()">Register</button>
+ </div>
+ <form onsubmit="auth(event)">
+   <label>User ID</label>
+   <input id="aid" required minlength="3">
+   <label>Password</label>
+   <input id="apass" type="password" required minlength="4">
+   <button class="btn" style="width:100%;margin-top:18px">${mode==='login'?'Login':'Create Account'}</button>
+ </form>
+ <p class="muted" style="font-size:12px;margin-top:20px">⚠️ Passwords are stored locally for demonstration only. Never use real banking credentials, PINs, OTPs, seed phrases or private keys.</p>
+ `;
 }
-function auth(e){e.preventDefault();let id=$('#aid').value.trim(),pass=$('#apass').value,x=users();
- if(mode==='register'){if(x[id])return toast('User ID already exists');let u=blank(id,id);u.password=pass;saveUser(u);localStorage.setItem(SESSION,id);start();toast('Demo account created')}
- else{if(!x[id]||x[id].password!==pass)return toast('Invalid local credentials');localStorage.setItem(SESSION,id);start()}
+
+function auth(e){
+ e.preventDefault();
+ let id=$('#aid').value.trim();
+ let pass=$('#apass').value;
+ let x=users();
+ 
+ if(mode==='register'){
+   if(x[id]) return toast('❌ User ID already exists!');
+   let u=blank(id,id);
+   u.password=pass;
+   saveUser(u);
+   localStorage.setItem(SESSION,id);
+   start();
+   toast('✅ Account created successfully!');
+ } else {
+   if(!x[id]) return toast('❌ User not found! Please register first.');
+   if(x[id].password!==pass) return toast('❌ Invalid password!');
+   localStorage.setItem(SESSION,id);
+   start();
+   toast('✅ Welcome back!');
+ }
 }
+
 function logout(){
-    if(confirm('Are you sure you want to logout?')){
-        localStorage.removeItem(SESSION);
-        location.reload();
-    }
+ if(confirm('Are you sure you want to logout?')){
+   localStorage.removeItem(SESSION);
+   location.reload();
+ }
 }
+
 function start() {
-    $('#auth').classList.add('hidden');
-    $('#app').classList.remove('hidden');
-    drawNav();
-    render();
-    loadProfilePic();
+ $('#auth').classList.add('hidden');
+ $('#app').classList.remove('hidden');
+ drawNav();
+ render();
+ loadProfilePic();
 }
+
 function drawNav(){let h=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]} &nbsp; ${x[2]}</button>`).join('');$('#nav').innerHTML=h;$('#mobileNav').innerHTML=navItems.slice(0,5).map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]}<br>${x[2]}</button>`).join('')}
 function calc(){let u=current(),tx=u.transactions;let income=tx.filter(x=>['Income','Received'].includes(x.type)).reduce((a,x)=>a+x.amount,0),expense=tx.filter(x=>['Expense','Payment'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
  let bal={Cash:0,Binance:0,eSewa:0,Khalti:0,MyPay:0};tx.forEach(x=>{let sign=['Income','Deposit','Received','Loan Taken'].includes(x.type)?1:-1;if(bal[x.account]!=null)bal[x.account]+=sign*x.amount});Object.keys(bal).forEach(k=>bal[k]+=+(u.adjustments[k]||0));
@@ -327,18 +257,16 @@ function settings(){let s=current().settings;return`<div class="card"><h3>Profil
 function saveSettings(e){e.preventDefault();let u=current();u.name=$('#sn').value||u.id;u.settings={...u.settings,currency:$('#sc').value,dateFormat:$('#sd').value,notifications:$('#notif').checked};saveUser(u);render();toast('Settings saved')}
 function exportJSON(){let b=new Blob([JSON.stringify(current(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mr-elon-ali-backup.json';a.click()}
 function exportCSV(){let rows=[['id','type','category','amount','account','date','time','description','person'],...current().transactions.map(x=>[x.id,x.type,x.category,x.amount,x.account,x.date,x.time,x.description,x.person])];let b=new Blob([rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='transactions.csv';a.click()}
-function resetData(){if(confirm('Permanently clear this user’s local data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('Data reset')}}
+function resetData(){if(confirm('Permanently clear this user\'s local data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('Data reset')}}
 function modal(html){$('#modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button>${html}</div></div>`}
 function closeModal(){$('#modalRoot').innerHTML=''}
 
 // ========== INITIALIZATION ==========
-// Sab se pehle demo user ensure karein
-ensureDemoUser();
-
-// Agar current user hai toh start karein, warna auth dikhayein
+// Check if user is already logged in
 if(current()){
     start();
 } else {
+    // Show login page
     renderAuth();
     $('#auth').classList.remove('hidden');
     $('#app').classList.add('hidden');
