@@ -59,7 +59,8 @@ canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
 </style>
 </head>
 <body>
-<div id="auth" class="auth">
+<!-- Auth section - ab yeh hidden rahega -->
+<div id="auth" class="auth hidden">
  <div class="authbox">
   <div class="brand">MR ELON <span>ALI</span></div>
   <p class="muted">Local demo authentication — not suitable for real financial security.</p>
@@ -67,7 +68,7 @@ canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
  </div>
 </div>
 
-<div id="app" class="app hidden">
+<div id="app" class="app">
 <aside class="sidebar">
  <div class="brand">MR ELON <span>ALI</span></div>
  <nav id="nav"></nav>
@@ -114,6 +115,110 @@ function blank(id,name){return{id,name,password:'',profilePic:null,transactions:
 function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),2600)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
+// ========== AUTO CREATE DEMO USER ==========
+function ensureDemoUser() {
+    let allUsers = users();
+    // Agar koi user nahi hai toh demo create karein
+    if (Object.keys(allUsers).length === 0) {
+        let demoUser = {
+            id: 'demo',
+            name: 'Demo User',
+            password: 'demo123',
+            profilePic: null,
+            transactions: [
+                {
+                    id: uid(),
+                    type: 'Income',
+                    account: 'Cash',
+                    amount: 50000,
+                    date: today(),
+                    time: new Date().toLocaleTimeString(),
+                    category: 'Salary',
+                    person: '',
+                    description: 'Monthly salary'
+                },
+                {
+                    id: uid(),
+                    type: 'Expense',
+                    account: 'eSewa',
+                    amount: 2000,
+                    date: today(),
+                    time: new Date().toLocaleTimeString(),
+                    category: 'Shopping',
+                    person: '',
+                    description: 'Groceries'
+                },
+                {
+                    id: uid(),
+                    type: 'Expense',
+                    account: 'Khalti',
+                    amount: 1500,
+                    date: today(),
+                    time: new Date().toLocaleTimeString(),
+                    category: 'Food',
+                    person: '',
+                    description: 'Lunch'
+                }
+            ],
+            ledger: [
+                {
+                    id: uid(),
+                    kind: 'receive',
+                    person: 'Ram Sharma',
+                    amount: 10000,
+                    partial: 0,
+                    date: today(),
+                    due: '2026-09-15',
+                    note: 'Loan given',
+                    paid: false
+                },
+                {
+                    id: uid(),
+                    kind: 'pay',
+                    person: 'Hari Gurung',
+                    amount: 5000,
+                    partial: 0,
+                    date: today(),
+                    due: '2026-08-20',
+                    note: 'Borrowed money',
+                    paid: false
+                }
+            ],
+            pnl: [
+                {
+                    date: today(),
+                    income: 50000,
+                    expense: 3500,
+                    target: 10000,
+                    notes: 'Good day!'
+                }
+            ],
+            adjustments: {
+                'Cash': 5000,
+                'eSewa': -1000
+            },
+            settings: {
+                currency: 'NPR',
+                dateFormat: 'YYYY-MM-DD',
+                theme: 'dark',
+                notifications: true
+            }
+        };
+        allUsers['demo'] = demoUser;
+        localStorage.setItem(KEY, JSON.stringify(allUsers));
+        localStorage.setItem(SESSION, 'demo');
+        return true;
+    }
+    
+    // Agar user hai lekin koi session nahi toh pehle user ko login karein
+    if (!localStorage.getItem(SESSION)) {
+        let firstUser = Object.keys(allUsers)[0];
+        localStorage.setItem(SESSION, firstUser);
+        return true;
+    }
+    return false;
+}
+
 // ========== PROFILE PICTURE FUNCTIONS ==========
 function loadProfilePic() {
   let u = current();
@@ -139,13 +244,11 @@ function uploadProfilePic(event) {
   let file = event.target.files[0];
   if (!file) return;
   
-  // Check file size (max 5MB)
   if (file.size > 5 * 1024 * 1024) {
     toast('Image too large! Max 5MB');
     return;
   }
   
-  // Check file type
   if (!file.type.startsWith('image/')) {
     toast('Please select an image file');
     return;
@@ -160,7 +263,6 @@ function uploadProfilePic(event) {
     toast('Profile picture updated!');
   };
   reader.readAsDataURL(file);
-  // Reset input so same file can be uploaded again
   event.target.value = '';
 }
 
@@ -183,8 +285,19 @@ function auth(e){e.preventDefault();let id=$('#aid').value.trim(),pass=$('#apass
  if(mode==='register'){if(x[id])return toast('User ID already exists');let u=blank(id,id);u.password=pass;saveUser(u);localStorage.setItem(SESSION,id);start();toast('Demo account created')}
  else{if(!x[id]||x[id].password!==pass)return toast('Invalid local credentials');localStorage.setItem(SESSION,id);start()}
 }
-function logout(){localStorage.removeItem(SESSION);location.reload()}
-function start(){$('#auth').classList.add('hidden');$('#app').classList.remove('hidden');drawNav();render();loadProfilePic();}
+function logout(){
+    if(confirm('Are you sure you want to logout?')){
+        localStorage.removeItem(SESSION);
+        location.reload();
+    }
+}
+function start() {
+    $('#auth').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    drawNav();
+    render();
+    loadProfilePic();
+}
 function drawNav(){let h=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]} &nbsp; ${x[2]}</button>`).join('');$('#nav').innerHTML=h;$('#mobileNav').innerHTML=navItems.slice(0,5).map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]}<br>${x[2]}</button>`).join('')}
 function calc(){let u=current(),tx=u.transactions;let income=tx.filter(x=>['Income','Received'].includes(x.type)).reduce((a,x)=>a+x.amount,0),expense=tx.filter(x=>['Expense','Payment'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
  let bal={Cash:0,Binance:0,eSewa:0,Khalti:0,MyPay:0};tx.forEach(x=>{let sign=['Income','Deposit','Received','Loan Taken'].includes(x.type)?1:-1;if(bal[x.account]!=null)bal[x.account]+=sign*x.amount});Object.keys(bal).forEach(k=>bal[k]+=+(u.adjustments[k]||0));
@@ -207,7 +320,7 @@ function openLedger(kind){modal(`<h2>${kind==='receive'?'Money to receive':'Mone
 function addLedger(e,k){e.preventDefault();let u=current();u.ledger.push({id:uid(),kind:k,person:$('#lp').value,amount:+$('#la').value,partial:0,date:$('#ld').value,due:$('#due').value,note:$('#ln').value,paid:false});saveUser(u);closeModal();render();toast('Ledger entry saved')}
 function partial(id){let u=current(),x=u.ledger.find(a=>a.id===id),v=+prompt('Payment amount',x.amount-x.partial);if(!v||v<0)return;x.partial=Math.min(x.amount,x.partial+v);x.paid=x.partial>=x.amount;saveUser(u);render()}
 function delLedger(id){if(confirm('Delete this ledger entry?')){let u=current();u.ledger=u.ledger.filter(x=>x.id!==id);saveUser(u);render()}}
-function pnl(){let u=current(),a=u.pnl.find(x=>x.date===today())||{};return`<div class="card"><h3>Daily profit & loss</h3><form onsubmit="savePnl(event)" class="formgrid"><div><label>Date</label><input id="pd" type="date" value="${a.date||today()}"></div><div><label>Income</label><input id="pi" type="number" step=".01" value="${a.income||0}"></div><div><label>Expense</label><input id="pe" type="number" step=".01" value="${a.expense||0}"></div><div><label>Recovery target</label><input id="pr" type="number" step=".01" value="${a.target||0}"></div><div class="full"><label>Daily notes</label><textarea id="pn">${esc(a.notes||'')}</textarea></div><button class="btn">Save daily P&L</button></form></div><div class="card" style="margin-top:16px"><h3>Date-wise history</h3>${u.pnl.length?txTable(u.pnl.map(x=>({id:x.date,date:x.date,type:'P&L',account:'—',description:`Income ${money(x.income)} / Expense ${money(x.expense)}`,amount:x.income-x.expense}))):'<div class="empty">No daily records</div>'}</div>`}a
+function pnl(){let u=current(),a=u.pnl.find(x=>x.date===today())||{};return`<div class="card"><h3>Daily profit & loss</h3><form onsubmit="savePnl(event)" class="formgrid"><div><label>Date</label><input id="pd" type="date" value="${a.date||today()}"></div><div><label>Income</label><input id="pi" type="number" step=".01" value="${a.income||0}"></div><div><label>Expense</label><input id="pe" type="number" step=".01" value="${a.expense||0}"></div><div><label>Recovery target</label><input id="pr" type="number" step=".01" value="${a.target||0}"></div><div class="full"><label>Daily notes</label><textarea id="pn">${esc(a.notes||'')}</textarea></div><button class="btn">Save daily P&L</button></form></div><div class="card" style="margin-top:16px"><h3>Date-wise history</h3>${u.pnl.length?txTable(u.pnl.map(x=>({id:x.date,date:x.date,type:'P&L',account:'—',description:`Income ${money(x.income)} / Expense ${money(x.expense)}`,amount:x.income-x.expense}))):'<div class="empty">No daily records</div>'}</div>`}
 function savePnl(e){e.preventDefault();let u=current(),x={date:$('#pd').value,income:+$('#pi').value||0,expense:+$('#pe').value||0,target:+$('#pr').value||0,notes:$('#pn').value},i=u.pnl.findIndex(a=>a.date===x.date);i<0?u.pnl.push(x):u.pnl[i]=x;saveUser(u);render();toast('Daily P&L saved')}
 function reports(){let c=calc();return`<div class="grid cards"><div class="card stat"><small>Income</small><div class="amount positive">${money(c.income)}</div></div><div class="card stat"><small>Expenses</small><div class="amount negative">${money(c.expense)}</div></div><div class="card stat"><small>Net P/L</small><div class="amount">${money(c.income-c.expense)}</div></div><div class="card stat"><small>Receivable / Payable</small><div class="amount">${money(c.rec)} / ${money(c.pay)}</div></div></div><div class="card" style="margin-top:16px"><h3>Income vs expense</h3><canvas id="chart"></canvas></div>`}
 function settings(){let s=current().settings;return`<div class="card"><h3>Profile & settings</h3><form onsubmit="saveSettings(event)"><label>Display name</label><input id="sn" value="${esc(current().name)}"><label>Currency</label><select id="sc"><option ${s.currency==='NPR'?'selected':''}>NPR</option><option ${s.currency==='USD'?'selected':''}>USD</option><option ${s.currency==='EUR'?'selected':''}>EUR</option></select><label>Date format</label><select id="sd"><option>YYYY-MM-DD</option><option>DD/MM/YYYY</option></select><label><input id="notif" type="checkbox" style="width:auto" ${s.notifications?'checked':''}> Enable notifications</label><button class="btn">Save settings</button></form><hr><button class="btn secondary" onclick="exportJSON()">Export JSON backup</button> <button class="btn secondary" onclick="exportCSV()">Export CSV</button> <button class="btn danger" onclick="resetData()">Reset all data</button><p class="muted">Never enter passwords, PINs, OTPs, seed phrases, private keys or API keys.</p></div>`}
@@ -217,7 +330,19 @@ function exportCSV(){let rows=[['id','type','category','amount','account','date'
 function resetData(){if(confirm('Permanently clear this user’s local data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('Data reset')}}
 function modal(html){$('#modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button>${html}</div></div>`}
 function closeModal(){$('#modalRoot').innerHTML=''}
-if(current()){start();}else renderAuth();
+
+// ========== INITIALIZATION ==========
+// Sab se pehle demo user ensure karein
+ensureDemoUser();
+
+// Agar current user hai toh start karein, warna auth dikhayein
+if(current()){
+    start();
+} else {
+    renderAuth();
+    $('#auth').classList.remove('hidden');
+    $('#app').classList.add('hidden');
+}
 </script>
 </body>
 </html>
