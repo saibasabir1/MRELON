@@ -3,106 +3,590 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MR ELON ALI — Money Manager</title>
+<title>MR ELON ALI — Premium Money Manager</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+
 :root{
-  --bg:#08090d;--panel:#11131a;--panel2:#171a23;--line:#272b38;
-  --text:#f4f6fb;--muted:#9299aa;--primary:#7c5cff;--cyan:#24d6d1;
-  --green:#37d68a;--red:#ff667d;--yellow:#f4c95d;--radius:20px
+  --bg:#0a0b1e;
+  --panel:rgba(255,255,255,0.05);
+  --panel2:rgba(255,255,255,0.08);
+  --line:rgba(255,255,255,0.1);
+  --text:#ffffff;
+  --muted:rgba(255,255,255,0.5);
+  --primary:#6c5ce7;
+  --primary-light:#a29bfe;
+  --primary-dark:#4834d4;
+  --cyan:#00cec9;
+  --green:#00b894;
+  --red:#fd79a8;
+  --yellow:#fdcb6e;
+  --radius:20px;
+  --shadow:0 25px 50px -12px rgba(0,0,0,0.8);
+  --glass:rgba(255,255,255,0.05);
+  --border-glow:rgba(108,92,231,0.3);
 }
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#21154b 0,transparent 30%),var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}
-.app{display:flex;min-height:100vh}.sidebar{width:250px;background:#0b0c11;border-right:1px solid var(--line);padding:24px 15px;position:fixed;inset:0 auto 0 0;z-index:4}
-.brand{font-weight:900;font-size:20px;letter-spacing:1px;padding:10px 14px 28px}.brand span{color:var(--primary)}
-nav button{display:block;width:100%;background:transparent;color:var(--muted);padding:13px 15px;text-align:left;border-radius:12px;margin:4px 0}
-nav button:hover,nav button.active{background:linear-gradient(90deg,#241b52,transparent);color:white}
-.main{margin-left:250px;width:calc(100% - 250px);padding:24px;max-width:1700px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.eyebrow{color:var(--muted);font-size:12px}.title{font-size:28px;font-weight:800;margin-top:5px}
-.profile{display:flex;align-items:center;gap:10px;position:relative}
-.profile-avatar{width:50px;height:50px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;transition:all 0.3s;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--cyan));flex-shrink:0}
-.profile-avatar:hover{opacity:0.8;transform:scale(1.05)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  margin:0;
+  background:#0a0b1e;
+  color:var(--text);
+  font:14px 'Inter',system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+  background-image: 
+    radial-gradient(ellipse at 10% 20%, rgba(108,92,231,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(0,206,201,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(108,92,231,0.05) 0%, transparent 70%);
+  background-attachment:fixed;
+}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:10px}
+::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--primary),var(--cyan));border-radius:10px}
+
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+.hidden{display:none!important}
+
+/* ====== GLASSMORPHISM ====== */
+.glass{
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+/* ====== PREMIUM BUTTONS ====== */
+.btn{
+  position:relative;
+  padding:12px 28px;
+  border-radius:14px;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.5px;
+  color:white;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  box-shadow:0 4px 20px rgba(108,92,231,0.4);
+  overflow:hidden;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  text-transform:uppercase;
+}
+
+.btn::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  transition:left 0.5s;
+}
+
+.btn:hover::before{left:100%}
+.btn:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 8px 35px rgba(108,92,231,0.6);
+}
+.btn:active{transform:translateY(0) scale(0.98)}
+
+.btn-secondary{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.btn-secondary:hover{
+  background:rgba(255,255,255,0.15);
+  transform:translateY(-3px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+
+.btn-danger{
+  background:linear-gradient(135deg,#fd79a8,#e17055);
+  box-shadow:0 4px 20px rgba(253,121,168,0.4);
+}
+.btn-danger:hover{
+  box-shadow:0 8px 35px rgba(253,121,168,0.6);
+}
+
+.btn-success{
+  background:linear-gradient(135deg,#00b894,#00cec9);
+  box-shadow:0 4px 20px rgba(0,206,201,0.4);
+}
+.btn-success:hover{
+  box-shadow:0 8px 35px rgba(0,206,201,0.6);
+}
+
+.btn-glow{
+  animation:glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 4px 20px rgba(108,92,231,0.4)}
+  50%{box-shadow:0 4px 40px rgba(108,92,231,0.8),0 0 60px rgba(108,92,231,0.2)}
+}
+
+.btn-small{padding:8px 16px;font-size:11px;border-radius:10px}
+
+/* ====== APP LAYOUT ====== */
+.app{display:flex;min-height:100vh}
+
+/* ====== SIDEBAR ====== */
+.sidebar{
+  width:260px;
+  background:rgba(10,11,30,0.95);
+  backdrop-filter:blur(20px);
+  border-right:1px solid rgba(255,255,255,0.06);
+  padding:28px 18px;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:4;
+}
+.brand{
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:2px;
+  padding:8px 14px 32px;
+  background:linear-gradient(135deg,#fff 30%,var(--primary-light));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.brand span{
+  background:linear-gradient(135deg,var(--primary),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+nav button{
+  display:block;
+  width:100%;
+  background:transparent;
+  color:var(--muted);
+  padding:14px 18px;
+  text-align:left;
+  border-radius:14px;
+  margin:4px 0;
+  font-weight:600;
+  font-size:13px;
+  transition:all 0.3s;
+  position:relative;
+}
+nav button:hover{
+  background:rgba(108,92,231,0.15);
+  color:white;
+  transform:translateX(5px);
+}
+nav button.active{
+  background:linear-gradient(135deg,rgba(108,92,231,0.2),rgba(0,206,201,0.1));
+  color:white;
+  box-shadow:inset 0 0 20px rgba(108,92,231,0.1);
+}
+nav button.active::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:20%;
+  height:60%;
+  width:3px;
+  background:linear-gradient(180deg,var(--primary),var(--cyan));
+  border-radius:0 10px 10px 0;
+}
+
+/* ====== MAIN ====== */
+.main{
+  margin-left:260px;
+  width:calc(100% - 260px);
+  padding:28px;
+  max-width:1800px;
+}
+
+/* ====== HEADER ====== */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+  padding:20px 28px;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.eyebrow{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+.title{
+  font-size:32px;
+  font-weight:900;
+  margin-top:4px;
+  background:linear-gradient(135deg,#fff 60%,var(--primary-light));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  position:relative;
+}
+.profile-avatar{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid var(--primary);
+  cursor:pointer;
+  transition:all 0.3s;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--cyan));
+  flex-shrink:0;
+  box-shadow:0 0 30px rgba(108,92,231,0.3);
+}
+.profile-avatar:hover{
+  transform:scale(1.08) rotate(-5deg);
+  box-shadow:0 0 50px rgba(108,92,231,0.5);
+}
 .profile-avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.profile-avatar .avatar-text{font-size:20px;font-weight:800;color:white}
+.profile-avatar .avatar-text{font-size:22px;font-weight:800;color:white}
 .profile-info{display:flex;flex-direction:column;align-items:flex-end}
-.profile-name{font-weight:600;font-size:16px}
+.profile-name{
+  font-weight:700;
+  font-size:17px;
+  background:linear-gradient(135deg,#fff,var(--primary-light));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
 .profile-actions{display:flex;gap:6px;margin-top:4px}
-.profile-actions button{background:rgba(124,92,255,0.2);color:var(--text);padding:4px 10px;border-radius:8px;font-size:11px;transition:all 0.3s}
-.profile-actions button:hover{background:rgba(124,92,255,0.4)}
-.profile-actions .remove-btn{background:rgba(255,102,125,0.2)}
-.profile-actions .remove-btn:hover{background:rgba(255,102,125,0.4)}
+.profile-actions button{
+  background:rgba(108,92,231,0.15);
+  color:var(--text);
+  padding:5px 14px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:600;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.profile-actions button:hover{
+  background:rgba(108,92,231,0.3);
+  transform:scale(1.05);
+}
+.profile-actions .remove-btn{background:rgba(253,121,168,0.15)}
+.profile-actions .remove-btn:hover{background:rgba(253,121,168,0.3)}
 #profilePicInput{display:none}
-.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-.card{background:linear-gradient(145deg,rgba(28,31,42,.95),rgba(13,15,21,.95));border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 15px 40px #0003}
-.stat{min-height:135px}.stat small,.muted{color:var(--muted)}.amount{font-size:27px;font-weight:800;margin:11px 0}.positive{color:var(--green)}.negative{color:var(--red)}.accent{color:var(--cyan)}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
-.btn{background:var(--primary);color:white;padding:11px 15px;border-radius:11px;font-weight:700}.btn.secondary{background:#222634}.btn.danger{background:#742537}.btn.small{padding:7px 10px;font-size:12px}
-input,select,textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0b0d13;color:var(--text);outline:0}
-textarea{min-height:75px;resize:vertical}label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}
-.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}
-table{width:100%;border-collapse:collapse}th,td{padding:13px 8px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px}
-.scroll{overflow:auto}.pill{padding:4px 8px;border-radius:20px;background:#252938;font-size:11px}.overdue{color:var(--red);font-weight:bold}
-.account{display:flex;justify-content:space-between;align-items:center}.account h3{margin:0 0 8px}.icon{font-size:25px}
-canvas{width:100%;height:230px;background:#0c0e14;border-radius:13px}
-.empty{text-align:center;color:var(--muted);padding:35px}.quick{display:flex;gap:8px;flex-wrap:wrap}
-.modal-bg{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:10;padding:15px}.modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:#151823;border:1px solid var(--line);border-radius:20px;padding:22px}
-.modal h2{margin-top:0}.close{float:right;background:none;color:var(--muted);font-size:22px}
-.toast{position:fixed;right:20px;bottom:20px;background:#242a3a;padding:14px 18px;border-radius:12px;z-index:20;box-shadow:0 8px 30px #0008}
-.mobile-nav{display:none}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.authbox{width:min(440px,100%);background:var(--panel);padding:30px;border:1px solid var(--line);border-radius:25px}
-@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){
- .sidebar{display:none}.main{margin:0;width:100%;padding:16px;padding-bottom:85px}.cards,.two{grid-template-columns:1fr}.title{font-size:23px}
- .mobile-nav{display:flex;position:fixed;bottom:0;inset-inline:0;background:#11131b;border-top:1px solid var(--line);z-index:5;justify-content:space-around;padding:8px}
- .mobile-nav button{background:none;color:var(--muted);font-size:11px}.mobile-nav button.active{color:white}.formgrid{grid-template-columns:1fr}
- table thead{display:none}table,tbody,tr,td{display:block;width:100%}tr{border:1px solid var(--line);border-radius:13px;padding:8px;margin-bottom:10px}td{border:0;padding:5px 4px}td:before{content:attr(data-label);color:var(--muted);margin-right:8px}
- .profile-avatar{width:40px;height:40px}.profile-name{font-size:14px}
+
+/* ====== CARDS ====== */
+.grid{display:grid;gap:20px}
+.cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.card{
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius);
+  padding:24px;
+  box-shadow:var(--shadow);
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:radial-gradient(circle at 30% 30%,rgba(108,92,231,0.03),transparent 70%);
+  pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(108,92,231,0.2);
+  box-shadow:0 30px 60px -15px rgba(0,0,0,0.6);
+}
+
+.stat{min-height:140px;position:relative}
+.stat small{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:600;
+}
+.amount{
+  font-size:30px;
+  font-weight:900;
+  margin:12px 0 0;
+  background:linear-gradient(135deg,#fff 60%,var(--primary-light));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.positive{color:var(--green)!important;-webkit-text-fill-color:var(--green)!important}
+.negative{color:var(--red)!important;-webkit-text-fill-color:var(--red)!important}
+.accent{color:var(--cyan)!important;-webkit-text-fill-color:var(--cyan)!important}
+
+/* ====== TOOLBAR ====== */
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:20px 0;
+}
+
+/* ====== INPUTS ====== */
+input,select,textarea{
+  width:100%;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
+  color:var(--text);
+  outline:0;
+  transition:all 0.3s;
+  font-weight:500;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 30px rgba(108,92,231,0.1);
+  background:rgba(255,255,255,0.08);
+}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+
+/* ====== TABLE ====== */
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05)}
+th{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:700;
+}
+tr{transition:all 0.3s}
+tr:hover{background:rgba(255,255,255,0.03)}
+
+.pill{
+  padding:5px 14px;
+  border-radius:20px;
+  background:rgba(108,92,231,0.15);
+  font-size:11px;
+  font-weight:600;
+  border:1px solid rgba(108,92,231,0.1);
+}
+.overdue{
+  color:var(--red);
+  font-weight:700;
+  animation:blink 1s ease-in-out infinite;
+}
+@keyframes blink{
+  0%,100%{opacity:1}
+  50%{opacity:0.3}
+}
+
+/* ====== MODAL ====== */
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(20px);
+  display:grid;
+  place-items:center;
+  z-index:10;
+  padding:20px;
+}
+.modal{
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:rgba(20,22,45,0.95);
+  backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  padding:30px;
+  box-shadow:0 50px 100px -20px rgba(0,0,0,0.8);
+}
+.modal h2{
+  margin-top:0;
+  font-size:24px;
+  font-weight:800;
+}
+.close{
+  float:right;
+  background:none;
+  color:var(--muted);
+  font-size:28px;
+  transition:all 0.3s;
+}
+.close:hover{color:white;transform:rotate(90deg)}
+
+/* ====== TOAST ====== */
+.toast{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  background:rgba(20,22,45,0.95);
+  backdrop-filter:blur(30px);
+  padding:16px 24px;
+  border-radius:16px;
+  z-index:20;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:600;
+  min-width:200px;
+  animation:slideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slideUp{
+  from{transform:translateY(100px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+/* ====== AUTH ====== */
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:radial-gradient(ellipse at 30% 30%,rgba(108,92,231,0.15),transparent 60%),
+             radial-gradient(ellipse at 70% 70%,rgba(0,206,201,0.08),transparent 60%);
+}
+.authbox{
+  width:min(460px,100%);
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(30px);
+  padding:40px;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:30px;
+  box-shadow:0 50px 100px -20px rgba(0,0,0,0.6);
+}
+
+/* ====== MOBILE ====== */
+.mobile-nav{display:none}
+
+@media(max-width:1200px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin:0;width:100%;padding:16px;padding-bottom:90px}
+  .cards,.two{grid-template-columns:1fr}
+  .title{font-size:24px}
+  .mobile-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    inset-inline:0;
+    background:rgba(10,11,30,0.95);
+    backdrop-filter:blur(20px);
+    border-top:1px solid rgba(255,255,255,0.06);
+    z-index:5;
+    justify-content:space-around;
+    padding:10px 8px;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mobile-nav button{
+    background:none;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:600;
+    padding:6px 12px;
+    border-radius:10px;
+  }
+  .mobile-nav button.active{
+    color:white;
+    background:rgba(108,92,231,0.15);
+  }
+  .formgrid{grid-template-columns:1fr}
+  table thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:12px;
+    background:rgba(255,255,255,0.02);
+  }
+  td{border:0;padding:6px 4px}
+  td:before{content:attr(data-label);color:var(--muted);margin-right:10px;font-weight:600}
+  .profile-avatar{width:44px;height:44px}
+  .profile-name{font-size:14px}
+  header{padding:16px;flex-wrap:wrap;gap:12px}
 }
 </style>
 </head>
 <body>
-<!-- Auth Section - Always Visible First -->
+
+<!-- ====== AUTH ====== -->
 <div id="auth" class="auth">
  <div class="authbox">
-  <div class="brand">MR ELON <span>ALI</span></div>
-  <p class="muted">Local demo authentication — not suitable for real financial security.</p>
+  <div class="brand" style="font-size:28px;padding:0 0 20px;text-align:center">MR ELON <span>ALI</span></div>
+  <p style="text-align:center;color:var(--muted);margin-bottom:24px;font-size:13px">💎 Premium Personal Finance Manager</p>
   <div id="authForm"></div>
  </div>
 </div>
 
-<!-- App Section - Hidden by default -->
+<!-- ====== APP ====== -->
 <div id="app" class="app hidden">
 <aside class="sidebar">
  <div class="brand">MR ELON <span>ALI</span></div>
  <nav id="nav"></nav>
- <button class="btn secondary" style="width:100%;margin-top:25px" onclick="logout()">Logout</button>
+ <button class="btn btn-secondary" style="width:100%;margin-top:30px" onclick="logout()">🚪 Logout</button>
 </aside>
+
 <main class="main">
 <header>
- <div><div class="eyebrow">Personal finance workspace</div><div id="pageTitle" class="title">Dashboard</div></div>
+ <div>
+  <div class="eyebrow">💼 Premium Workspace</div>
+  <div id="pageTitle" class="title">Dashboard</div>
+ </div>
  <div class="profile">
-   <div class="profile-info">
-     <div class="profile-name" id="userName"></div>
-     <div class="profile-actions">
-       <button onclick="document.getElementById('profilePicInput').click()">Upload Photo</button>
-       <button class="remove-btn" onclick="deleteProfilePic()">Remove</button>
-     </div>
+  <div class="profile-info">
+   <div class="profile-name" id="userName"></div>
+   <div class="profile-actions">
+    <button onclick="document.getElementById('profilePicInput').click()">📷 Upload</button>
+    <button class="remove-btn" onclick="deleteProfilePic()">🗑 Remove</button>
    </div>
-   <div class="profile-avatar" id="avatarContainer" onclick="document.getElementById('profilePicInput').click()">
-     <span class="avatar-text" id="avatarText">M</span>
-     <img id="profilePicImg" style="display:none" alt="Profile">
-   </div>
-   <input type="file" id="profilePicInput" accept="image/*" onchange="uploadProfilePic(event)">
+  </div>
+  <div class="profile-avatar" id="avatarContainer" onclick="document.getElementById('profilePicInput').click()">
+   <span class="avatar-text" id="avatarText">M</span>
+   <img id="profilePicImg" style="display:none" alt="Profile">
+  </div>
+  <input type="file" id="profilePicInput" accept="image/*" onchange="uploadProfilePic(event)">
  </div>
 </header>
 <section id="content"></section>
 </main>
+
 <div class="mobile-nav" id="mobileNav"></div>
 </div>
-<div id="modalRoot"></div><div id="toast" class="toast hidden"></div>
+
+<div id="modalRoot"></div>
+<div id="toast" class="toast hidden"></div>
 
 <script>
 const KEY='mra_users', SESSION='mra_session';
 const accounts=['Cash','Binance','eSewa','Khalti','MyPay'];
-const navItems=[['dashboard','▦','Dashboard'],['transactions','↕','Transactions'],['accounts','◈','Digital Accounts'],['ledger','◉','Udhaar & Cash'],['pnl','◒','Daily P&L'],['reports','▥','Reports'],['settings','⚙','Settings']];
+const navItems=[
+  ['dashboard','📊','Dashboard'],
+  ['transactions','📝','Transactions'],
+  ['accounts','🏦','Accounts'],
+  ['ledger','📒','Ledger'],
+  ['pnl','📈','P&L'],
+  ['reports','📋','Reports'],
+  ['settings','⚙️','Settings']
+];
 let page='dashboard', mode='login';
 
 const $=s=>document.querySelector(s);
@@ -113,164 +597,355 @@ function current(){let id=localStorage.getItem(SESSION);return id&&users()[id]}
 function saveUser(u){let x=users();x[u.id]=u;localStorage.setItem(KEY,JSON.stringify(x))}
 function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now()+Math.random()}
 function blank(id,name){return{id,name,password:'',profilePic:null,transactions:[],ledger:[],pnl:[],adjustments:{},settings:{currency:'NPR',dateFormat:'YYYY-MM-DD',theme:'dark',notifications:true}}}
-function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),2600)}
+function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),3000)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
-// ========== PROFILE PICTURE FUNCTIONS ==========
-function loadProfilePic() {
-  let u = current();
-  if (!u) return;
-  let img = document.getElementById('profilePicImg');
-  let text = document.getElementById('avatarText');
-  let container = document.getElementById('avatarContainer');
-  
-  if (u.profilePic) {
-    img.src = u.profilePic;
-    img.style.display = 'block';
-    text.style.display = 'none';
-    container.style.background = 'transparent';
-  } else {
-    img.style.display = 'none';
-    text.style.display = 'grid';
-    text.textContent = (u.name || 'U')[0].toUpperCase();
-    container.style.background = 'linear-gradient(135deg,var(--primary),var(--cyan))';
+// ====== PROFILE PICTURE ======
+function loadProfilePic(){
+  let u=current();if(!u)return;
+  let img=document.getElementById('profilePicImg');
+  let text=document.getElementById('avatarText');
+  let container=document.getElementById('avatarContainer');
+  if(u.profilePic){
+    img.src=u.profilePic;img.style.display='block';
+    text.style.display='none';container.style.background='transparent';
+  }else{
+    img.style.display='none';
+    text.style.display='grid';
+    text.textContent=(u.name||'M')[0].toUpperCase();
+    container.style.background='linear-gradient(135deg,var(--primary),var(--cyan))';
   }
 }
-
-function uploadProfilePic(event) {
-  let file = event.target.files[0];
-  if (!file) return;
-  
-  if (file.size > 5 * 1024 * 1024) {
-    toast('Image too large! Max 5MB');
-    return;
-  }
-  
-  if (!file.type.startsWith('image/')) {
-    toast('Please select an image file');
-    return;
-  }
-  
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    let u = current();
-    u.profilePic = e.target.result;
-    saveUser(u);
-    loadProfilePic();
-    toast('Profile picture updated!');
+function uploadProfilePic(e){
+  let file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024)return toast('❌ Image too large! Max 5MB');
+  if(!file.type.startsWith('image/'))return toast('❌ Please select an image');
+  let reader=new FileReader();
+  reader.onload=function(e){
+    let u=current();u.profilePic=e.target.result;saveUser(u);loadProfilePic();
+    toast('✅ Profile picture updated!');
   };
-  reader.readAsDataURL(file);
-  event.target.value = '';
+  reader.readAsDataURL(file);e.target.value='';
+}
+function deleteProfilePic(){
+  if(!confirm('Remove profile picture?'))return;
+  let u=current();u.profilePic=null;saveUser(u);loadProfilePic();
+  toast('✅ Profile picture removed');
 }
 
-function deleteProfilePic() {
-  if (!confirm('Remove your profile picture?')) return;
-  let u = current();
-  u.profilePic = null;
-  saveUser(u);
-  loadProfilePic();
-  toast('Profile picture removed');
-}
-// ==============================================
-
+// ====== AUTH ======
 function renderAuth(){
  $('#authForm').innerHTML=`
- <div class="toolbar">
-   <button class="btn ${mode==='login'?'':'secondary'}" onclick="mode='login';renderAuth()">Login</button>
-   <button class="btn ${mode==='register'?'':'secondary'}" onclick="mode='register';renderAuth()">Register</button>
+ <div style="display:flex;gap:10px;margin-bottom:20px">
+  <button class="btn ${mode==='login'?'':'btn-secondary'}" style="flex:1" onclick="mode='login';renderAuth()">🔐 Login</button>
+  <button class="btn ${mode==='register'?'':'btn-secondary'}" style="flex:1" onclick="mode='register';renderAuth()">📝 Register</button>
  </div>
  <form onsubmit="auth(event)">
-   <label>User ID</label>
-   <input id="aid" required minlength="3">
-   <label>Password</label>
-   <input id="apass" type="password" required minlength="4">
-   <button class="btn" style="width:100%;margin-top:18px">${mode==='login'?'Login':'Create Account'}</button>
+  <label style="display:block;color:var(--muted);font-size:12px;margin-bottom:6px;font-weight:600">👤 Username</label>
+  <input id="aid" required minlength="3" placeholder="Enter username" style="margin-bottom:14px">
+  <label style="display:block;color:var(--muted);font-size:12px;margin-bottom:6px;font-weight:600">🔑 Password</label>
+  <input id="apass" type="password" required minlength="4" placeholder="Enter password" style="margin-bottom:20px">
+  <button class="btn btn-glow" style="width:100%;font-size:16px;padding:14px">${mode==='login'?'🔐 Login':'✨ Create Account'}</button>
  </form>
- <p class="muted" style="font-size:12px;margin-top:20px">⚠️ Passwords are stored locally for demonstration only. Never use real banking credentials, PINs, OTPs, seed phrases or private keys.</p>
+ <p style="text-align:center;color:var(--muted);font-size:11px;margin-top:20px">⚠️ Local demo only — Never use real credentials</p>
+ `;
+}
+function auth(e){
+ e.preventDefault();
+ let id=$('#aid').value.trim(),pass=$('#apass').value,x=users();
+ if(mode==='register'){
+  if(x[id])return toast('❌ User already exists!');
+  let u=blank(id,id);u.password=pass;saveUser(u);
+  localStorage.setItem(SESSION,id);start();
+  toast('✨ Account created! Welcome to MR ELON ALI');
+ }else{
+  if(!x[id])return toast('❌ User not found! Register first');
+  if(x[id].password!==pass)return toast('❌ Invalid password!');
+  localStorage.setItem(SESSION,id);start();
+  toast('👋 Welcome back to MR ELON ALI!');
+ }
+}
+function logout(){
+ if(confirm('Logout?')){localStorage.removeItem(SESSION);location.reload()}
+}
+function start(){
+ $('#auth').classList.add('hidden');
+ $('#app').classList.remove('hidden');
+ drawNav();render();loadProfilePic();
+}
+
+// ====== NAV ======
+function drawNav(){
+ let h=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]} ${x[2]}</button>`).join('');
+ $('#nav').innerHTML=h;
+ $('#mobileNav').innerHTML=navItems.slice(0,5).map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]}<br>${x[2]}</button>`).join('');
+}
+
+// ====== CALC ======
+function calc(){
+ let u=current(),tx=u.transactions;
+ let income=tx.filter(x=>['Income','Received'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
+ let expense=tx.filter(x=>['Expense','Payment'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
+ let bal={Cash:0,Binance:0,eSewa:0,Khalti:0,MyPay:0};
+ tx.forEach(x=>{let sign=['Income','Deposit','Received','Loan Taken'].includes(x.type)?1:-1;if(bal[x.account]!=null)bal[x.account]+=sign*x.amount});
+ Object.keys(bal).forEach(k=>bal[k]+=+(u.adjustments[k]||0));
+ let rec=u.ledger.filter(x=>x.kind==='receive'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0);
+ let pay=u.ledger.filter(x=>x.kind==='pay'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0);
+ return{income,expense,bal,total:Object.values(bal).reduce((a,b)=>a+b,0),rec,pay};
+}
+
+// ====== RENDER ======
+function render(){
+ let u=current();
+ $('#userName').textContent='👤 '+u.name;
+ loadProfilePic();
+ $('#pageTitle').textContent=navItems.find(x=>x[0]===page)[2];
+ let views={dashboard,transactions,accountsView,ledger,pnl,reports,settings};
+ $('#content').innerHTML=views[page]();
+}
+
+// ====== DASHBOARD ======
+function dashboard(){
+ let c=calc(),d=c.income-c.expense;
+ let todayTx=current().transactions.filter(x=>x.date===today());
+ let td=todayTx.reduce((a,x)=>a+(['Income','Received'].includes(x.type)?x.amount:-x.amount),0);
+ return `
+ <div class="grid cards">
+  <div class="card stat">💰<small>Total Balance</small><div class="amount">${money(c.total)}</div></div>
+  <div class="card stat">📈<small>Total Income</small><div class="amount positive">${money(c.income)}</div></div>
+  <div class="card stat">📉<small>Total Expenses</small><div class="amount negative">${money(c.expense)}</div></div>
+  <div class="card stat">📊<small>Today's P/L</small><div class="amount ${td>=0?'positive':'negative'}">${money(td)}</div></div>
+  <div class="card stat">📥<small>To Receive</small><div class="amount accent">${money(c.rec)}</div></div>
+  <div class="card stat">📤<small>To Pay</small><div class="amount negative">${money(c.pay)}</div></div>
+  <div class="card stat">🏦<small>Digital Total</small><div class="amount">${money(c.total-c.bal.Cash)}</div></div>
+  <div class="card stat">🔄<small>Recovery</small><div class="amount">${money(Math.max(0,-d))}</div></div>
+ </div>
+ <div class="card" style="margin-top:20px">
+  <h3>⚡ Quick Actions</h3>
+  <div class="quick" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+   <button class="btn btn-glow" onclick="openTx()">➕ Add Transaction</button>
+   <button class="btn btn-secondary" onclick="page='ledger';render()">📒 Ledger Entry</button>
+   <button class="btn btn-secondary" onclick="page='pnl';render()">📈 Daily P&L</button>
+  </div>
+ </div>
+ <div class="card" style="margin-top:20px">
+  <h3>📝 Recent Transactions</h3>
+  ${txTable(current().transactions.slice(-6).reverse())}
+ </div>
  `;
 }
 
-function auth(e){
- e.preventDefault();
- let id=$('#aid').value.trim();
- let pass=$('#apass').value;
- let x=users();
- 
- if(mode==='register'){
-   if(x[id]) return toast('❌ User ID already exists!');
-   let u=blank(id,id);
-   u.password=pass;
-   saveUser(u);
-   localStorage.setItem(SESSION,id);
-   start();
-   toast('✅ Account created successfully!');
- } else {
-   if(!x[id]) return toast('❌ User not found! Please register first.');
-   if(x[id].password!==pass) return toast('❌ Invalid password!');
-   localStorage.setItem(SESSION,id);
-   start();
-   toast('✅ Welcome back!');
- }
+// ====== TX TABLE ======
+function txTable(a){
+ if(!a.length)return'<div class="empty" style="text-align:center;color:var(--muted);padding:40px">📭 No transactions yet</div>';
+ return`
+ <div class="scroll" style="overflow:auto">
+  <table>
+   <thead><tr><th>📅 Date</th><th>📌 Type</th><th>🏦 Account</th><th>📝 Description</th><th>💰 Amount</th><th></th></tr></thead>
+   <tbody>${a.map(x=>`
+    <tr>
+     <td data-label="Date">${x.date}</td>
+     <td data-label="Type"><span class="pill">${esc(x.type)}</span></td>
+     <td data-label="Account">${esc(x.account)}</td>
+     <td data-label="Description">${esc(x.description||'-')}</td>
+     <td data-label="Amount" class="${['Income','Received','Deposit'].includes(x.type)?'positive':'negative'}">${money(x.amount)}</td>
+     <td><button class="btn btn-danger btn-small" onclick="delTx('${x.id}')">🗑</button></td>
+    </tr>
+   `).join('')}</tbody>
+  </table>
+ </div>
+ `;
 }
 
-function logout(){
- if(confirm('Are you sure you want to logout?')){
-   localStorage.removeItem(SESSION);
-   location.reload();
- }
+// ====== TRANSACTIONS ======
+function transactions(){
+ return`
+ <div class="toolbar">
+  <input id="q" placeholder="🔍 Search transactions..." oninput="filterTx()" style="max-width:300px">
+  <select id="tf" onchange="filterTx()" style="max-width:200px">
+   <option value="">📌 All types</option>
+   ${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}
+  </select>
+  <button class="btn btn-glow" onclick="openTx()">➕ Add</button>
+ </div>
+ <div class="card" id="txlist">${txTable(current().transactions.slice().reverse())}</div>
+ `;
+}
+function filterTx(){
+ let q=$('#q').value.toLowerCase(),f=$('#tf').value;
+ let a=current().transactions.filter(x=>(!f||x.type===f)&&JSON.stringify(x).toLowerCase().includes(q));
+ $('#txlist').innerHTML=txTable(a.reverse());
 }
 
-function start() {
- $('#auth').classList.add('hidden');
- $('#app').classList.remove('hidden');
- drawNav();
- render();
- loadProfilePic();
+// ====== ADD TX ======
+function openTx(){
+ modal(`
+ <h2>➕ New Transaction</h2>
+ <form onsubmit="addTx(event)">
+  <div class="formgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📌 Type</label><select id="tt">${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}</select></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">🏦 Account</label><select id="ta">${accounts.map(x=>`<option>${x}</option>`).join('')}</select></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">💰 Amount</label><input id="am" type="number" min=".01" step=".01" required></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📅 Date</label><input id="dt" type="date" value="${today()}" required></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📂 Category</label><input id="cat" required></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">👤 Person</label><input id="person"></div>
+   <div style="grid-column:1/-1"><label style="color:var(--muted);font-size:12px;font-weight:600">📝 Description</label><textarea id="desc"></textarea></div>
+  </div>
+  <button class="btn btn-glow" style="width:100%;margin-top:16px;padding:14px">💾 Save Transaction</button>
+ </form>
+ `);
+}
+function addTx(e){
+ e.preventDefault();let u=current();
+ u.transactions.push({id:uid(),type:$('#tt').value,account:$('#ta').value,amount:+$('#am').value,date:$('#dt').value,time:new Date().toLocaleTimeString(),category:$('#cat').value,person:$('#person').value,description:$('#desc').value});
+ saveUser(u);closeModal();render();toast('✅ Transaction saved!');
+}
+function delTx(id){
+ if(!confirm('Delete?'))return;
+ let u=current();u.transactions=u.transactions.filter(x=>x.id!==id);
+ saveUser(u);render();toast('🗑 Deleted');
 }
 
-function drawNav(){let h=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]} &nbsp; ${x[2]}</button>`).join('');$('#nav').innerHTML=h;$('#mobileNav').innerHTML=navItems.slice(0,5).map(x=>`<button class="${page===x[0]?'active':''}" onclick="page='${x[0]}';drawNav();render()">${x[1]}<br>${x[2]}</button>`).join('')}
-function calc(){let u=current(),tx=u.transactions;let income=tx.filter(x=>['Income','Received'].includes(x.type)).reduce((a,x)=>a+x.amount,0),expense=tx.filter(x=>['Expense','Payment'].includes(x.type)).reduce((a,x)=>a+x.amount,0);
- let bal={Cash:0,Binance:0,eSewa:0,Khalti:0,MyPay:0};tx.forEach(x=>{let sign=['Income','Deposit','Received','Loan Taken'].includes(x.type)?1:-1;if(bal[x.account]!=null)bal[x.account]+=sign*x.amount});Object.keys(bal).forEach(k=>bal[k]+=+(u.adjustments[k]||0));
- let rec=u.ledger.filter(x=>x.kind==='receive'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0),pay=u.ledger.filter(x=>x.kind==='pay'&&!x.paid).reduce((a,x)=>a+x.amount-x.partial,0);return{income,expense,bal,total:Object.values(bal).reduce((a,b)=>a+b,0),rec,pay}}
-function render(){let u=current();$('#userName').textContent=u.name;loadProfilePic();$('#pageTitle').textContent=navItems.find(x=>x[0]===page)[2];let views={dashboard:dashboard,transactions:transactions,accounts:accountsView,ledger:ledger,pnl:pnl,reports:reports,settings:settings};$('#content').innerHTML=views[page]()}
-function dashboard(){let c=calc(),d=c.income-c.expense,todayTx=current().transactions.filter(x=>x.date===today()),td=todayTx.reduce((a,x)=>a+(['Income','Received'].includes(x.type)?x.amount:-x.amount),0);
-return `<div class="grid cards"><div class="card stat">◉<small>Total Balance</small><div class="amount">${money(c.total)}</div></div><div class="card stat">↗<small>Total Income</small><div class="amount positive">${money(c.income)}</div></div><div class="card stat">↘<small>Total Expenses</small><div class="amount negative">${money(c.expense)}</div></div><div class="card stat">◒<small>Today's P/L</small><div class="amount ${td>=0?'positive':'negative'}">${money(td)}</div></div><div class="card stat">◉<small>Money To Receive</small><div class="amount accent">${money(c.rec)}</div></div><div class="card stat">◉<small>Money To Pay</small><div class="amount negative">${money(c.pay)}</div></div><div class="card stat">◈<small>Digital Accounts</small><div class="amount">${money(c.total-c.bal.Cash)}</div></div><div class="card stat">↻<small>Recovery Amount</small><div class="amount">${money(Math.max(0,-d))}</div></div></div>
-<div class="card" style="margin-top:16px"><h3>Quick actions</h3><div class="quick"><button class="btn" onclick="openTx()">＋ Add transaction</button><button class="btn secondary" onclick="page='ledger';render()">＋ Add ledger entry</button><button class="btn secondary" onclick="page='pnl';render()">Daily P&L</button></div></div>
-<div class="card" style="margin-top:16px"><h3>Recent transactions</h3>${txTable(current().transactions.slice(-6).reverse())}</div>`}
-function txTable(a){if(!a.length)return'<div class="empty">No transactions recorded yet.</div>';return`<div class="scroll"><table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>${a.map(x=>`<tr><td data-label="Date">${x.date}</td><td data-label="Type"><span class="pill">${esc(x.type)}</span></td><td data-label="Account">${esc(x.account)}</td><td data-label="Description">${esc(x.description)}</td><td data-label="Amount" class="${['Income','Received','Deposit'].includes(x.type)?'positive':'negative'}">${money(x.amount)}</td><td><button class="btn small danger" onclick="delTx('${x.id}')">Delete</button></td></tr>`).join('')}</tbody></table></div>`}
-function transactions(){return `<div class="toolbar"><input id="q" placeholder="Search transactions..." oninput="filterTx()" style="max-width:300px"><select id="tf" onchange="filterTx()"><option value="">All types</option>${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}</select><button class="btn" onclick="openTx()">＋ Add transaction</button></div><div class="card" id="txlist">${txTable(current().transactions.slice().reverse())}</div>`}
-function filterTx(){let q=$('#q').value.toLowerCase(),f=$('#tf').value,a=current().transactions.filter(x=>(!f||x.type===f)&&JSON.stringify(x).toLowerCase().includes(q));$('#txlist').innerHTML=txTable(a.reverse())}
-function openTx(){modal(`<h2>Add transaction</h2><form onsubmit="addTx(event)"><div class="formgrid"><div><label>Type</label><select id="tt">${['Income','Expense','Deposit','Withdrawal','Transfer','Received','Payment','Loan Given','Loan Taken'].map(x=>`<option>${x}</option>`).join('')}</select></div><div><label>Account</label><select id="ta">${accounts.map(x=>`<option>${x}</option>`).join('')}</select></div><div><label>Amount</label><input id="am" type="number" min=".01" step=".01" required></div><div><label>Date</label><input id="dt" type="date" value="${today()}" required></div><div><label>Category</label><input id="cat" required></div><div><label>Person (optional)</label><input id="person"></div><div class="full"><label>Description / note</label><textarea id="desc"></textarea></div></div><button class="btn">Save transaction</button></form>`)}
-function addTx(e){e.preventDefault();let u=current();u.transactions.push({id:uid(),type:$('#tt').value,account:$('#ta').value,amount:+$('#am').value,date:$('#dt').value,time:new Date().toLocaleTimeString(),category:$('#cat').value,person:$('#person').value,description:$('#desc').value});saveUser(u);closeModal();render();toast('Transaction saved')}
-function delTx(id){if(!confirm('Delete this transaction?'))return;let u=current();u.transactions=u.transactions.filter(x=>x.id!==id);saveUser(u);render();toast('Transaction deleted')}
-function accountsView(){let c=calc();return `<div class="grid two">${accounts.map(a=>`<div class="card account"><div><h3>${a}</h3><small class="muted">Manual ledger only — no external connection</small><div class="amount">${money(c.bal[a])}</div></div><div class="icon">◈</div></div>`).join('')}</div><div class="card" style="margin-top:16px"><h3>Manual balance adjustment</h3><form onsubmit="adjust(event)" class="toolbar"><select id="aa">${accounts.map(x=>`<option>${x}</option>`).join('')}</select><input id="av" type="number" step=".01" required placeholder="New adjustment amount"><button class="btn">Save adjustment</button></form></div>`}
-function adjust(e){e.preventDefault();let u=current();u.adjustments[$('#aa').value]=+$('#av').value;saveUser(u);render();toast('Balance adjustment saved')}
-function ledger(){let u=current(),q=u.ledger;return `<div class="toolbar"><button class="btn" onclick="openLedger('receive')">＋ Money to receive</button><button class="btn secondary" onclick="openLedger('pay')">＋ Money to pay</button></div><div class="grid two">${['receive','pay'].map(k=>{let a=q.filter(x=>x.kind===k),sum=a.reduce((s,x)=>s+x.amount-x.partial,0);return`<div class="card"><h3>${k==='receive'?'Money To Receive':'Money To Pay'} <span class="accent">${money(sum)}</span></h3>${a.length?a.map(x=>`<div style="border-top:1px solid var(--line);padding:13px 0"><b>${esc(x.person)}</b> — ${money(x.amount-x.partial)} remaining<br><small class="muted">Due ${x.due||'—'} · ${esc(x.note)}</small> ${x.due&&x.due<today()&&!x.paid?'<span class="overdue">Overdue</span>':''}<br><button class="btn small" onclick="partial('${x.id}')">Add payment</button> <button class="btn small danger" onclick="delLedger('${x.id}')">Delete</button></div>`).join(''):'<div class="empty">No entries</div>'}</div>`}).join('')}</div>`}
-function openLedger(kind){modal(`<h2>${kind==='receive'?'Money to receive':'Money to pay'}</h2><form onsubmit="addLedger(event,'${kind}')"><label>Person name</label><input id="lp" required><label>Amount</label><input id="la" type="number" min=".01" step=".01" required><label>${kind==='receive'?'Given':'Borrowed'} date</label><input id="ld" type="date" value="${today()}"><label>Due date</label><input id="due" type="date"><label>Note</label><textarea id="ln"></textarea><button class="btn">Save entry</button></form>`)}
-function addLedger(e,k){e.preventDefault();let u=current();u.ledger.push({id:uid(),kind:k,person:$('#lp').value,amount:+$('#la').value,partial:0,date:$('#ld').value,due:$('#due').value,note:$('#ln').value,paid:false});saveUser(u);closeModal();render();toast('Ledger entry saved')}
-function partial(id){let u=current(),x=u.ledger.find(a=>a.id===id),v=+prompt('Payment amount',x.amount-x.partial);if(!v||v<0)return;x.partial=Math.min(x.amount,x.partial+v);x.paid=x.partial>=x.amount;saveUser(u);render()}
-function delLedger(id){if(confirm('Delete this ledger entry?')){let u=current();u.ledger=u.ledger.filter(x=>x.id!==id);saveUser(u);render()}}
-function pnl(){let u=current(),a=u.pnl.find(x=>x.date===today())||{};return`<div class="card"><h3>Daily profit & loss</h3><form onsubmit="savePnl(event)" class="formgrid"><div><label>Date</label><input id="pd" type="date" value="${a.date||today()}"></div><div><label>Income</label><input id="pi" type="number" step=".01" value="${a.income||0}"></div><div><label>Expense</label><input id="pe" type="number" step=".01" value="${a.expense||0}"></div><div><label>Recovery target</label><input id="pr" type="number" step=".01" value="${a.target||0}"></div><div class="full"><label>Daily notes</label><textarea id="pn">${esc(a.notes||'')}</textarea></div><button class="btn">Save daily P&L</button></form></div><div class="card" style="margin-top:16px"><h3>Date-wise history</h3>${u.pnl.length?txTable(u.pnl.map(x=>({id:x.date,date:x.date,type:'P&L',account:'—',description:`Income ${money(x.income)} / Expense ${money(x.expense)}`,amount:x.income-x.expense}))):'<div class="empty">No daily records</div>'}</div>`}
-function savePnl(e){e.preventDefault();let u=current(),x={date:$('#pd').value,income:+$('#pi').value||0,expense:+$('#pe').value||0,target:+$('#pr').value||0,notes:$('#pn').value},i=u.pnl.findIndex(a=>a.date===x.date);i<0?u.pnl.push(x):u.pnl[i]=x;saveUser(u);render();toast('Daily P&L saved')}
-function reports(){let c=calc();return`<div class="grid cards"><div class="card stat"><small>Income</small><div class="amount positive">${money(c.income)}</div></div><div class="card stat"><small>Expenses</small><div class="amount negative">${money(c.expense)}</div></div><div class="card stat"><small>Net P/L</small><div class="amount">${money(c.income-c.expense)}</div></div><div class="card stat"><small>Receivable / Payable</small><div class="amount">${money(c.rec)} / ${money(c.pay)}</div></div></div><div class="card" style="margin-top:16px"><h3>Income vs expense</h3><canvas id="chart"></canvas></div>`}
-function settings(){let s=current().settings;return`<div class="card"><h3>Profile & settings</h3><form onsubmit="saveSettings(event)"><label>Display name</label><input id="sn" value="${esc(current().name)}"><label>Currency</label><select id="sc"><option ${s.currency==='NPR'?'selected':''}>NPR</option><option ${s.currency==='USD'?'selected':''}>USD</option><option ${s.currency==='EUR'?'selected':''}>EUR</option></select><label>Date format</label><select id="sd"><option>YYYY-MM-DD</option><option>DD/MM/YYYY</option></select><label><input id="notif" type="checkbox" style="width:auto" ${s.notifications?'checked':''}> Enable notifications</label><button class="btn">Save settings</button></form><hr><button class="btn secondary" onclick="exportJSON()">Export JSON backup</button> <button class="btn secondary" onclick="exportCSV()">Export CSV</button> <button class="btn danger" onclick="resetData()">Reset all data</button><p class="muted">Never enter passwords, PINs, OTPs, seed phrases, private keys or API keys.</p></div>`}
-function saveSettings(e){e.preventDefault();let u=current();u.name=$('#sn').value||u.id;u.settings={...u.settings,currency:$('#sc').value,dateFormat:$('#sd').value,notifications:$('#notif').checked};saveUser(u);render();toast('Settings saved')}
-function exportJSON(){let b=new Blob([JSON.stringify(current(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mr-elon-ali-backup.json';a.click()}
-function exportCSV(){let rows=[['id','type','category','amount','account','date','time','description','person'],...current().transactions.map(x=>[x.id,x.type,x.category,x.amount,x.account,x.date,x.time,x.description,x.person])];let b=new Blob([rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='transactions.csv';a.click()}
-function resetData(){if(confirm('Permanently clear this user\'s local data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('Data reset')}}
-function modal(html){$('#modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button>${html}</div></div>`}
+// ====== ACCOUNTS ======
+function accountsView(){
+ let c=calc();
+ return`
+ <div class="grid two">${accounts.map(a=>`
+  <div class="card account" style="display:flex;justify-content:space-between;align-items:center">
+   <div><h3 style="margin:0 0 6px">🏦 ${a}</h3><small style="color:var(--muted)">Manual balance</small><div class="amount">${money(c.bal[a])}</div></div>
+   <div style="font-size:32px">💳</div>
+  </div>
+ `).join('')}</div>
+ <div class="card" style="margin-top:20px">
+  <h3>⚙️ Balance Adjustment</h3>
+  <form onsubmit="adjust(event)" class="toolbar">
+   <select id="aa">${accounts.map(x=>`<option>${x}</option>`).join('')}</select>
+   <input id="av" type="number" step=".01" required placeholder="Amount" style="max-width:200px">
+   <button class="btn">💾 Save</button>
+  </form>
+ </div>
+ `;
+}
+function adjust(e){e.preventDefault();let u=current();u.adjustments[$('#aa').value]=+$('#av').value;saveUser(u);render();toast('✅ Adjusted')}
+
+// ====== LEDGER ======
+function ledger(){
+ let u=current(),q=u.ledger;
+ return`
+ <div class="toolbar">
+  <button class="btn btn-glow" onclick="openLedger('receive')">📥 Receive</button>
+  <button class="btn btn-secondary" onclick="openLedger('pay')">📤 Pay</button>
+ </div>
+ <div class="grid two">${['receive','pay'].map(k=>{
+  let a=q.filter(x=>x.kind===k),sum=a.reduce((s,x)=>s+x.amount-x.partial,0);
+  return`
+   <div class="card">
+    <h3>${k==='receive'?'📥 To Receive':'📤 To Pay'} <span class="accent">${money(sum)}</span></h3>
+    ${a.length?a.map(x=>`
+     <div style="border-top:1px solid rgba(255,255,255,0.06);padding:14px 0">
+      <b>👤 ${esc(x.person)}</b> — ${money(x.amount-x.partial)} left<br>
+      <small style="color:var(--muted)">📅 Due ${x.due||'—'} · ${esc(x.note||'')}</small>
+      ${x.due&&x.due<today()&&!x.paid?' <span class="overdue">⚠️ Overdue</span>':''}
+      <br><button class="btn btn-small btn-success" onclick="partial('${x.id}')">➕ Pay</button>
+      <button class="btn btn-small btn-danger" onclick="delLedger('${x.id}')">🗑</button>
+     </div>
+    `).join(''):'<div style="text-align:center;color:var(--muted);padding:30px">📭 Empty</div>'}
+   </div>
+  `;
+ }).join('')}</div>
+ `;
+}
+function openLedger(kind){
+ modal(`
+ <h2>${kind==='receive'?'📥 Money to Receive':'📤 Money to Pay'}</h2>
+ <form onsubmit="addLedger(event,'${kind}')">
+  <label style="color:var(--muted);font-size:12px;font-weight:600">👤 Person</label><input id="lp" required>
+  <label style="color:var(--muted);font-size:12px;font-weight:600">💰 Amount</label><input id="la" type="number" min=".01" step=".01" required>
+  <label style="color:var(--muted);font-size:12px;font-weight:600">📅 Date</label><input id="ld" type="date" value="${today()}">
+  <label style="color:var(--muted);font-size:12px;font-weight:600">📅 Due Date</label><input id="due" type="date">
+  <label style="color:var(--muted);font-size:12px;font-weight:600">📝 Note</label><textarea id="ln"></textarea>
+  <button class="btn btn-glow" style="width:100%;margin-top:12px">💾 Save</button>
+ </form>
+ `);
+}
+function addLedger(e,k){e.preventDefault();let u=current();
+ u.ledger.push({id:uid(),kind:k,person:$('#lp').value,amount:+$('#la').value,partial:0,date:$('#ld').value,due:$('#due').value,note:$('#ln').value,paid:false});
+ saveUser(u);closeModal();render();toast('✅ Saved');
+}
+function partial(id){let u=current(),x=u.ledger.find(a=>a.id===id),v=+prompt('💵 Payment amount',x.amount-x.partial);if(!v||v<0)return;x.partial=Math.min(x.amount,x.partial+v);x.paid=x.partial>=x.amount;saveUser(u);render()}
+function delLedger(id){if(confirm('Delete?')){let u=current();u.ledger=u.ledger.filter(x=>x.id!==id);saveUser(u);render()}}
+
+// ====== P&L ======
+function pnl(){
+ let u=current(),a=u.pnl.find(x=>x.date===today())||{};
+ return`
+ <div class="card">
+  <h3>📈 Daily P&L</h3>
+  <form onsubmit="savePnl(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📅 Date</label><input id="pd" type="date" value="${a.date||today()}"></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📈 Income</label><input id="pi" type="number" step=".01" value="${a.income||0}"></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">📉 Expense</label><input id="pe" type="number" step=".01" value="${a.expense||0}"></div>
+   <div><label style="color:var(--muted);font-size:12px;font-weight:600">🎯 Target</label><input id="pr" type="number" step=".01" value="${a.target||0}"></div>
+   <div style="grid-column:1/-1"><label style="color:var(--muted);font-size:12px;font-weight:600">📝 Notes</label><textarea id="pn">${esc(a.notes||'')}</textarea></div>
+   <button class="btn btn-glow" style="grid-column:1/-1;padding:14px">💾 Save P&L</button>
+  </form>
+ </div>
+ <div class="card" style="margin-top:20px">
+  <h3>📊 History</h3>
+  ${u.pnl.length?txTable(u.pnl.map(x=>({id:x.date,date:x.date,type:'📊 P&L',account:'—',description:`📈 ${money(x.income)} / 📉 ${money(x.expense)}`,amount:x.income-x.expense}))):'<div style="text-align:center;color:var(--muted);padding:30px">📭 No records</div>'}
+ </div>
+ `;
+}
+function savePnl(e){e.preventDefault();let u=current(),x={date:$('#pd').value,income:+$('#pi').value||0,expense:+$('#pe').value||0,target:+$('#pr').value||0,notes:$('#pn').value},i=u.pnl.findIndex(a=>a.date===x.date);i<0?u.pnl.push(x):u.pnl[i]=x;saveUser(u);render();toast('✅ P&L saved')}
+
+// ====== REPORTS ======
+function reports(){
+ let c=calc();
+ return`
+ <div class="grid cards">
+  <div class="card stat">📈<small>Income</small><div class="amount positive">${money(c.income)}</div></div>
+  <div class="card stat">📉<small>Expenses</small><div class="amount negative">${money(c.expense)}</div></div>
+  <div class="card stat">📊<small>Net P/L</small><div class="amount">${money(c.income-c.expense)}</div></div>
+  <div class="card stat">📥/📤<small>Rec/Pay</small><div class="amount">${money(c.rec)} / ${money(c.pay)}</div></div>
+ </div>
+ <div class="card" style="margin-top:20px"><h3>📊 Chart</h3><canvas id="chart"></canvas></div>
+ `;
+}
+
+// ====== SETTINGS ======
+function settings(){
+ let s=current().settings;
+ return`
+ <div class="card">
+  <h3>⚙️ Settings</h3>
+  <form onsubmit="saveSettings(event)">
+   <label style="color:var(--muted);font-size:12px;font-weight:600">👤 Display Name</label><input id="sn" value="${esc(current().name)}">
+   <label style="color:var(--muted);font-size:12px;font-weight:600">💱 Currency</label><select id="sc"><option ${s.currency==='NPR'?'selected':''}>NPR</option><option ${s.currency==='USD'?'selected':''}>USD</option><option ${s.currency==='EUR'?'selected':''}>EUR</option></select>
+   <label style="color:var(--muted);font-size:12px;font-weight:600">📅 Date Format</label><select id="sd"><option>YYYY-MM-DD</option><option>DD/MM/YYYY</option></select>
+   <label><input id="notif" type="checkbox" style="width:auto;margin-right:8px" ${s.notifications?'checked':''}> 🔔 Notifications</label>
+   <button class="btn btn-glow" style="width:100%;margin-top:12px;padding:14px">💾 Save Settings</button>
+  </form>
+  <hr style="border-color:rgba(255,255,255,0.06);margin:20px 0">
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+   <button class="btn btn-secondary" onclick="exportJSON()">📥 Export JSON</button>
+   <button class="btn btn-secondary" onclick="exportCSV()">📥 Export CSV</button>
+   <button class="btn btn-danger" onclick="resetData()">🗑 Reset Data</button>
+  </div>
+  <p style="color:var(--muted);font-size:11px;margin-top:16px">⚠️ Never enter real credentials</p>
+ </div>
+ `;
+}
+function saveSettings(e){e.preventDefault();let u=current();u.name=$('#sn').value||u.id;u.settings={...u.settings,currency:$('#sc').value,dateFormat:$('#sd').value,notifications:$('#notif').checked};saveUser(u);render();toast('✅ Saved')}
+function exportJSON(){let b=new Blob([JSON.stringify(current(),null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mr-elon-ali-backup.json';a.click()}
+function exportCSV(){let rows=[['id','type','category','amount','account','date','time','description','person'],...current().transactions.map(x=>[x.id,x.type,x.category,x.amount,x.account,x.date,x.time,x.description,x.person])];let b=new Blob([rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n')],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mr-elon-ali.csv';a.click()}
+function resetData(){if(confirm('⚠️ Delete all data?')){let u=blank(current().id,current().name);u.password=current().password;saveUser(u);render();toast('🗑 Reset')}}
+
+// ====== MODAL ======
+function modal(html){$('#modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">✕</button>${html}</div></div>`}
 function closeModal(){$('#modalRoot').innerHTML=''}
 
-// ========== INITIALIZATION ==========
-// Check if user is already logged in
-if(current()){
-    start();
-} else {
-    // Show login page
-    renderAuth();
-    $('#auth').classList.remove('hidden');
-    $('#app').classList.add('hidden');
-}
+// ====== INIT ======
+if(current()){start()}else{renderAuth();$('#auth').classList.remove('hidden');$('#app').classList.add('hidden')}
 </script>
 </body>
 </html>
